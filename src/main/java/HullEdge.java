@@ -16,6 +16,6 @@ public class HullEdge{
   public double metric(Point p){
     Point v = Point.difference(this.terminus, this.origin);
     Point w = Point.difference(p, this.terminus);
-    return Point.crossProduct(v, w);
+    return Point.crossProduct(w, v);// we want positive when ccwise edge turns clock wise to get to p
   }
 }

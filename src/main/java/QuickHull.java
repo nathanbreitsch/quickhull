@@ -2,6 +2,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 public class QuickHull {
     private ArrayList<Point> points;
@@ -40,17 +41,17 @@ public class QuickHull {
 
     public Point farthest(HullEdge edge){
 
-      Point farthest = null;
+      Point farthestPoint = null;
       double maxMetric = Double.NEGATIVE_INFINITY;
       for(Point p : points){
         double metric = edge.metric(p);
         if(metric > maxMetric){
           maxMetric = metric;
-          farthest = p;
+          farthestPoint = p;
         }
       }
       if(maxMetric > 0){
-        return farthest;
+        return farthestPoint;
       }
       else{
         return null;
@@ -62,7 +63,24 @@ public class QuickHull {
       List<HullEdge> ch = new LinkedList<HullEdge>();
       ch.add(initialLeft());
       ch.add(initialRight());
-      return null;
+      boolean done = false;
+      while(!done){
+        done = true;
+
+        for(ListIterator<HullEdge> currentEdgeIterator = ch.listIterator(); currentEdgeIterator.hasNext();){
+          HullEdge currentEdge = currentEdgeIterator.next();
+          Point farthestPoint = farthest(currentEdge);
+          if(farthestPoint != null){
+            done = false;
+            HullEdge edge1 = new HullEdge(currentEdge.origin, farthestPoint);
+            HullEdge edge2 = new HullEdge(farthestPoint, currentEdge.terminus);
+            currentEdgeIterator.set(edge2);
+            currentEdgeIterator.add(edge1);
+          }
+        }
+
+      }
+      return ch;
     }
 
 }

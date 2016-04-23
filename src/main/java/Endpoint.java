@@ -10,10 +10,20 @@ import java.util.stream.Collectors;
 
 public class Endpoint {
   public String getConvexHull(String serial, Context context) {
-    ArrayList<Point> points = parseSerial(serial);
-    QuickHull qh = new QuickHull(points);
-    List<HullEdge> ch = qh.convexHull();
-    return serialize(ch);
+    if(serial.contains(animate)){
+      serial = serial.replace("animate","");
+      ArrayList<Point> points = parseSerial(serial);
+      QuickHull qh = new QuickHull(points);
+      List< List<HullEdge> > chAnimation = qh.convexHullAnimation();
+      return serializeAnimation(chAnimation);
+    }
+    else{
+      ArrayList<Point> points = parseSerial(serial);
+      QuickHull qh = new QuickHull(points);
+      List<HullEdge> ch = qh.convexHull();
+      return serialize(ch);
+    }
+
   }
 
   public static ArrayList<Point> parseSerial(String serial){
@@ -30,6 +40,8 @@ public class Endpoint {
     return points;
   }
 
+
+
   public static String serialize(List<HullEdge> hull){
     return hull.stream()
                 .map(edge -> Double.toString(edge.origin.x) + ","
@@ -38,6 +50,12 @@ public class Endpoint {
                       + Double.toString(edge.terminus.y)
                     )
                 .collect(Collectors.joining(";"));
+  }
+
+  public static String serializeAnimation(List< List<HullEdge> > animation){
+    return animation.stream()
+                .map(hull -> serialize(hull))
+                .collect(Collectors.joining("@"));
   }
 
 }

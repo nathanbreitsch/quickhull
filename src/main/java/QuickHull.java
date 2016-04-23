@@ -83,4 +83,29 @@ public class QuickHull {
       return ch;
     }
 
+    public List< List<HullEdge> > convexHullAnimation(){
+      List< List<HullEdge> > chAnimation = new LinkedList<HullEdge>();
+      List<HullEdge> ch = new LinkedList<HullEdge>();
+      ch.add(initialLeft());
+      ch.add(initialRight());
+      boolean done = false;
+      while(!done){
+        done = true;
+        chAnimation.add(ch.clone());
+        for(ListIterator<HullEdge> currentEdgeIterator = ch.listIterator(); currentEdgeIterator.hasNext();){
+          HullEdge currentEdge = currentEdgeIterator.next();
+          Point farthestPoint = farthest(currentEdge);
+          if(farthestPoint != null){
+            done = false;
+            HullEdge edge1 = new HullEdge(currentEdge.origin, farthestPoint);
+            HullEdge edge2 = new HullEdge(farthestPoint, currentEdge.terminus);
+            currentEdgeIterator.set(edge2);
+            currentEdgeIterator.add(edge1);
+          }
+        }
+
+      }
+      return chAnimation;
+    }
+
 }
